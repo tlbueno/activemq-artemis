@@ -16,6 +16,8 @@
  */
 package org.apache.activemq.artemis.tests.integration.ssl;
 
+import java.util.logging.Handler;
+
 import org.apache.activemq.artemis.api.core.QueueConfiguration;
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.client.ActiveMQClient;
@@ -27,6 +29,8 @@ import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
 import org.apache.activemq.artemis.api.core.client.ServerLocator;
 import org.apache.activemq.artemis.core.remoting.impl.netty.NettyAcceptor;
 import org.apache.activemq.artemis.core.remoting.impl.netty.TransportConstants;
+import org.apache.activemq.artemis.logs.SensitiveInfoFilter;
+import org.jboss.logmanager.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +53,23 @@ public class SSLProviderTest extends SSLTestBase {
 
    @Test
    public void testProviderLoading() throws Exception {
+
+      // set log level to all and add a filter to all handlers
+      Logger x = Logger.getLogger("");
+      x.setLevel(org.jboss.logmanager.Level.ALL);
+      Handler[] xhandlers = x.getHandlers();
+      for (int i = 0; i < xhandlers.length; i++) {
+         xhandlers[i].setFilter(new SensitiveInfoFilter());
+      }
+
+      // set log level to all and add a filter to all handlers
+      Logger y = org.jboss.logmanager.Logger.getLogger("org.apache.activemq.artemis");
+      y.setLevel(org.jboss.logmanager.Level.ALL);
+      Handler[] yhandlers = x.getHandlers();
+      for (int i = 0; i < yhandlers.length; i++) {
+         yhandlers[i].setFilter(new SensitiveInfoFilter());
+      }
+
       if (!isOpenSSLSupported()) {
          return;
       }
